@@ -21,13 +21,15 @@ if os.path.exists(path(home, "env")):
     shutil.rmtree(path(home, "env"))
 
 def targetCpy(src, dst):
-    tmp_cpy = ("import os, sys\n\n"+"try:\n")
+    tmp_cpy = ("import os, sys\n\n"+
+    "sys.path[0] = \"{}\"\n".format(os.path.dirname(src))+
+    "try:\n")
     with open(src, "r") as data:
         for tmp_line in data.readlines():
             tmp_cpy += "    " + tmp_line
     tmp_cpy += "\nexcept Exception as e:\n    print('error in the code . . .')\n    print(e)\ninput()"
 
-    shutil.copytree(os.path.dirname(src), path(sys.path[0], "env"))
+    shutil.copytree(os.path.dirname(src), path(sys.path[0], "env"), ignore=shutil.ignore_patterns("*.md", ".git*", "__pycache__"))
 
     with open(dst, "w") as data:
         data.write(tmp_cpy)
